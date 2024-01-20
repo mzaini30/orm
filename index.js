@@ -1,20 +1,29 @@
 export class Orm {
-    constructor(table) {
-        this.table = table;
-        // init array kosong
-        this._data = [];
-        // ambil dari localStorage
-        if (localStorage.getItem(this.table) !== null) {
-            this._data = JSON.parse(localStorage.getItem(this.table));
+    constructor(database) {
+        this.database = database;
+    }
+
+    insert(table, dataBaru) {
+        this.database[table].push({
+            id: Date.now(),
+            ...dataBaru
+        });
+        return this;
+    }
+
+    update(table, id, dataBaru) {
+        const index = this.database[table].findIndex((d) => d.id === id);
+        if (index !== -1) {
+            this.database[table][index] = {
+                ...this.database[table][index],
+                ...dataBaru
+            };
         }
+        return this;
     }
 
-    insert(data) {
-        this._data.push(data);
+    done() {
+        return this.database;
     }
 
-    do() {
-        // simpan ke localStorage
-        localStorage.setItem(this.table, JSON.stringify(this._data));
-    }
 }
