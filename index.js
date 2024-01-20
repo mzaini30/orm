@@ -94,9 +94,8 @@ export class Orm {
 
             tables.forEach((table) => {
                 const foreignKey = `${table}Id`;  // Menghapus .toLowerCase()
-
                 // Mencari data di tabel terkait dengan memeriksa kesesuaian foreign key
-                const relatedData = this.database[table].filter((d2) => d1.id === d2.userId);
+                const relatedData = this.database[table].filter((d2) => d1.id === d2[`${table1}Id`]);
 
                 // Menambahkan data terkait ke objek hasil join jika ada kesesuaian
                 if (relatedData.length > 0) {
