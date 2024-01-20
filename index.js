@@ -129,6 +129,10 @@ export class Orm {
             }
 
             // Menambahkan data ke tabel2
+            if (!result[table2]) {
+                result[table2] = {};
+            }
+
             pivotRecords.forEach((pivotRecord) => {
                 const record2 = this.database[table2].find((record) => record.id === pivotRecord[`${table2}Id`]);
                 if (!result[table2][pivotRecord[`${table2}Id`]]) {
@@ -139,23 +143,37 @@ export class Orm {
                 }
 
                 // Menambahkan relasi di table2
-                result[table2][pivotRecord[`${table2}Id`]][table1].push({
+                const relatedData = {
                     id: result[table1][record1.id].id,
-                    nama: result[table1][record1.id].nama
+                };
+
+                Object.keys(result[table1][record1.id]).forEach((key) => {
+                    if (key !== 'id' && key !== table2) {
+                        relatedData[key] = result[table1][record1.id][key];
+                    }
                 });
+
+                result[table2][pivotRecord[`${table2}Id`]][table1].push(relatedData);
             });
 
             result[table1][record1.id][table2] = pivotRecords.map((pivotRecord) => {
                 // Mencari data di tabel terkait dengan ID yang sesuai
                 const record2 = this.database[table2].find((record) => record.id === pivotRecord[`${table2}Id`]);
-                return {
+                const relatedData = {
                     id: record2.id,
-                    [table2 === 'pangkat' ? table2 : 'nama']: record2[table2]
                 };
+
+                Object.keys(record2).forEach((key) => {
+                    if (key !== 'id' && key !== table1) {
+                        relatedData[key] = record2[key];
+                    }
+                });
+
+                return relatedData;
             });
 
             return result;
-        }, { [table1]: {}, [table2]: {} });
+        }, { [table1]: {} });
 
         const newOrmInstance = new Orm({
             ...this.database,
@@ -164,6 +182,7 @@ export class Orm {
         });
         return newOrmInstance;
     }
+
 
     done() {
         return this.database;
