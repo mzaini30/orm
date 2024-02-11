@@ -34,7 +34,7 @@
   $: if (selected) {
     // console.log(data[selected]);
     table = data[selected];
-    key = Object.keys(table[0]);
+    key = Object.keys(table[table.length - 1]);
     localStorage.stateDatabase = selected;
   }
 
