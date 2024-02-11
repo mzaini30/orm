@@ -14,14 +14,18 @@ export class Orm {
             dataBaru.forEach((d) => {
                 this.database[table].push({
                     id: buatId(),
-                    ...d
+                    ...d,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
                 });
             });
             return this;
         }
         this.database[table].push({
             id: buatId(),
-            ...dataBaru
+            ...dataBaru,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
         });
         return this;
     }
@@ -31,7 +35,8 @@ export class Orm {
         if (index !== -1) {
             this.database[table][index] = {
                 ...this.database[table][index],
-                ...dataBaru
+                ...dataBaru,
+                updatedAt: Date.now(),
             };
         }
         return this;
